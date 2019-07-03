@@ -1,15 +1,14 @@
 import sys
 import hashlib
-
+#from PIL import image
 
 class Image(object):
-    def __init__(self, path, valid_profiles, calculate_md5=false):
+    def __init__(self, path, valid_profiles, calculate_md5=False):
         self.valid_profiles = valid_profiles
 
         self.width, self.height, self.ratio = self.get_image_info()
 
-        if calculate_md5:
-            self.md5 = self.calculate_md5()
+        self.md5 = self.calculate_md5() if calculate_md5 else None
 
     def calculate_md5(self):
         return "eyy"
