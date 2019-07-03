@@ -1,6 +1,8 @@
 import yaml
 import os
 
+PARAMS = []
+
 
 def validate_config(config):
     """
@@ -27,21 +29,22 @@ def validate_config(config):
         max_ratio: 0.76
     """
     assert "src" in config
-    if not os.path.isdir(config['src']):
+    if not os.path.isdir(config["src"]):
         raise TypeError("invalid source directory")
 
     assert "dest" in config
-    if not isinstance(config['dest'], str):
+    if not isinstance(config["dest"], str):
         raise TypeError("destination must be string")
 
     assert "exclude" in config
-    if not isinstance(config['exclude'], list):
+    if not isinstance(config["exclude"], list):
         raise TypeError("invalid exclude list")
 
     assert "verbose" in config
     assert isinstance(config["verbose"], bool)
 
     assert "params" in config
+    assert len(config["params"]) != 0
     for x in config["params"]:
         assert "min_width" in config["params"][x]
         assert "min_height" in config["params"][x]
@@ -50,17 +53,33 @@ def validate_config(config):
 
 
 def load_config():
+    """
+    Loads config.yml
+    validates it
+    creates nessisary directories
+    """
     with open(CONFIG_FILE, "r") as ymlconf:
         config = yaml.load(ymlconf, Loader=yaml.FullLoader)
 
     validate_config(config)
 
-    if not os.path.isdir(config['dest']):
+    if not os.path.isdir(config["dest"]):
         try:
-            os.mkdir(config['dest'])
+            os.mkdir(config["dest"])
         except FileNotFoundError:
-            print("Error: unable to create destination directory, check your dest value: %s" % config['dest'])
+            print(
+                "Error: unable to create destination directory, check your dest value: %s"
+                % config["dest"]
+            )
             exit(-2)
+
+    for param in config["params"]:
+        try:
+            os.mkdir(os.path.join(config['dest'], param))
+            print('warning: created ', os.path.join(config['dest'], param))
+        except FileExistsError:
+            pass
+        PARAMS.append(param)
 
     return config
 
