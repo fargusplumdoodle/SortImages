@@ -14,3 +14,9 @@ params:
     min_height: 1500
     min_ratio: 0.36
     max_ratio: 0.76
+filetypes:
+  - png
+  - jpg
+  - JPG
+  - JPEG
+  - PNG

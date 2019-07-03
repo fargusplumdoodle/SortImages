@@ -1,5 +1,7 @@
 import yaml
+import glob
 import os
+import re
 
 PARAMS = []
 
@@ -43,6 +45,9 @@ def validate_config(config):
     assert "verbose" in config
     assert isinstance(config["verbose"], bool)
 
+    assert "filetypes" in config
+    assert len(config["filetypes"]) != 0
+
     assert "params" in config
     assert len(config["params"]) != 0
     for x in config["params"]:
@@ -82,6 +87,38 @@ def load_config():
         PARAMS.append(param)
 
     return config
+
+
+def get_files(config):
+    """
+    Procedure
+        1. get all source files with specified filetypes
+        1.1 remove all that are to be excluded from source 
+        2. get all destination files
+    """
+
+    # 1.
+    all_src_files = []
+    for x in config['filetypes']:
+        all_src_files = all_src_files + [f for f in glob.glob(config['src'] + "**/*." + x, recursive=True)]
+
+    # 1.1
+    remove_files = []
+    # finding filed to be excluded
+    for image_file in all_src_files:
+        for unwanted_dir in config['exclude']:
+            if re.match(r'^' + os.path.join(config['src'], unwanted_dir) + '.*', image_file):
+                remove_files.append(image_file)
+
+    # removing files to be excluded
+    for x in remove_files:
+        all_src_files.remove(x)
+
+
+
+
+
+    print(all_src_files)
 
 
 # loading settings

@@ -3,20 +3,21 @@ from Image import Image
 from functions import *
 import shutil
 
-SAMPLE_FILE = "/home/fargus/Pictures/HelpingRyan/1.png"
+SAMPLE_FILE = "/home/fargus/Pictures/"
 
 
 class TestImage(TestCase):
     def test_md5(self):
         i = Image(SAMPLE_FILE, [], calculate_md5=True)
-        pass
-        # assert i.md5 is not None
 
 
-class TestConfig(TestCase):
+
+class TestSortImages(TestCase):
     def setUp(self) -> None:
-        shutil.rmtree("/tmp/SortWallpaper")
+        pass
 
     def test_load_config(self):
+        shutil.rmtree("/tmp/SortWallpaper")
         load_config()
+
 
