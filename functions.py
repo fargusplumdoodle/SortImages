@@ -2,6 +2,7 @@ import yaml
 import glob
 import os
 import re
+from Image import Image
 
 PARAMS = []
 
@@ -93,8 +94,9 @@ def get_files(config):
     """
     Procedure
         1. get all source files with specified filetypes
-        1.1 remove all that are to be excluded from source 
+        1.1 remove all that are to be excluded from source
         2. get all destination files
+        2.1 get a list of file hashes
     """
 
     # 1.
@@ -114,11 +116,19 @@ def get_files(config):
     for x in remove_files:
         all_src_files.remove(x)
 
+    # 2.
+    all_dest_files = []
+    for x in config['filetypes']:
+        all_dest_files = all_dest_files + [f for f in glob.glob(config['dest'] + "**/*." + x, recursive=True)]
 
+    src_images = []
+    dest_images = []
 
+    for x in all_src_files:
+        src_images.append(Image(x, config['params'], calculate_info=True))
+    for x in all_dest_files:
+        dest_images.append(Image(x, config['params']))
 
-
-    print(all_src_files)
 
 
 # loading settings

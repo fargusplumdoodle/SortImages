@@ -14,3 +14,5 @@ config = load_config()
 
 # 2.
 all_pictures = get_files(config)
+
+print(all_pictures)

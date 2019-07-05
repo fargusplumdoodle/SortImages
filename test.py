@@ -8,8 +8,7 @@ SAMPLE_FILE = "/home/fargus/Pictures/"
 
 class TestImage(TestCase):
     def test_md5(self):
-        i = Image(SAMPLE_FILE, [], calculate_md5=True)
-
+        i = Image(SAMPLE_FILE, [], calculate_info=True)
 
 
 class TestSortImages(TestCase):
