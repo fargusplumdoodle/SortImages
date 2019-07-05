@@ -129,6 +129,9 @@ def get_files(config):
     for x in all_dest_files:
         dest_images.append(Image(x, config['params']))
 
+    print(
+        src_images[0].calculate_valid_profiles()
+    )
 
 
 # loading settings

@@ -5,8 +5,8 @@ exclude:
 verbose: false
 params:
   Desktop:
-    min_width: 1500
-    min_height: 900
+    min_width: 1400
+    min_height: 800
     min_ratio: 1.3
     max_ratio: 1.9
   Phone:
