@@ -1,0 +1,6 @@
+[Unit]
+Description=SortImages Service
+
+[Service]
+Type=oneshot
+ExecStart=/home/fargus/Projects/SortImages/main.py
