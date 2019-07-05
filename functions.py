@@ -1,4 +1,5 @@
 import yaml
+import shutil
 import glob
 import os
 import re
@@ -81,8 +82,8 @@ def load_config():
 
     for param in config["params"]:
         try:
-            os.mkdir(os.path.join(config['dest'], param))
-            print('warning: created ', os.path.join(config['dest'], param))
+            os.mkdir(os.path.join(config["dest"], param))
+            print("warning: created ", os.path.join(config["dest"], param))
         except FileExistsError:
             pass
         PARAMS.append(param)
@@ -101,15 +102,19 @@ def get_files(config):
 
     # 1.
     all_src_files = []
-    for x in config['filetypes']:
-        all_src_files = all_src_files + [f for f in glob.glob(config['src'] + "**/*." + x, recursive=True)]
+    for x in config["filetypes"]:
+        all_src_files = all_src_files + [
+            f for f in glob.glob(config["src"] + "**/*." + x, recursive=True)
+        ]
 
     # 1.1
     remove_files = []
     # finding filed to be excluded
     for image_file in all_src_files:
-        for unwanted_dir in config['exclude']:
-            if re.match(r'^' + os.path.join(config['src'], unwanted_dir) + '.*', image_file):
+        for unwanted_dir in config["exclude"]:
+            if re.match(
+                r"^" + os.path.join(config["src"], unwanted_dir) + ".*", image_file
+            ):
                 remove_files.append(image_file)
 
     # removing files to be excluded
@@ -118,20 +123,57 @@ def get_files(config):
 
     # 2.
     all_dest_files = []
-    for x in config['filetypes']:
-        all_dest_files = all_dest_files + [f for f in glob.glob(config['dest'] + "**/*." + x, recursive=True)]
+    for x in config["filetypes"]:
+        all_dest_files = all_dest_files + [
+            f for f in glob.glob(config["dest"] + "**/*." + x, recursive=True)
+        ]
 
     src_images = []
-    dest_images = []
+    failed_images = []
+    dest_sums = set()
+    src_sums = set()
+
+    # getting all of the md5 sums from the destination
+    for x in all_dest_files:
+        # when files are copied over their md5sum is their name to save time for later
+        i = Image(x, config["params"])
+        dest_sums.add(i.name)
 
     for x in all_src_files:
-        src_images.append(Image(x, config['params'], calculate_info=True))
-    for x in all_dest_files:
-        dest_images.append(Image(x, config['params']))
+        i = Image(x, config["params"], calculate_info=True)
 
-    print(
-        src_images[0].calculate_valid_profiles()
-    )
+        # we dont want to add images that failed
+        if i.failed:
+            failed_images.append(i)
+            continue
+
+        # we dont want to add any duplicate images either from the source or the destination
+        if i.md5 not in dest_sums and i.md5 not in src_sums and i.valid_profiles != []:
+            src_images.append(i)
+            src_sums.add(i.md5)
+
+    return src_images, failed_images
+
+
+def copy_images(images, config):
+    errors = []
+    for x in images:
+        try:
+            for profile in x.valid_profiles:
+                shutil.copyfile(
+                    x.path, os.path.join(config["dest"], profile, x.md5 + x.extention)
+                )
+                if config["verbose"]:
+                    print(
+                        "copied: %s to %s"
+                        % (
+                            x.path,
+                            os.path.join(config["dest"], profile, x.md5 + x.extention),
+                        )
+                    )
+        except Exception:
+            errors.append(x)
+    return errors
 
 
 # loading settings

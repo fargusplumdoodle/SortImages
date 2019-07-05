@@ -57,7 +57,6 @@ class Image(object):
                 )
             ):
                 valid_profiles.append(profile)
-        print(valid_profiles, self.name)
         return valid_profiles
 
     def calculate_md5(self):

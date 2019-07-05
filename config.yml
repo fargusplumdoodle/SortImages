@@ -2,7 +2,7 @@ src: /home/fargus/Pictures/
 dest: /tmp/SortWallpaper/
 exclude:
   - excludeme
-verbose: false
+verbose: true
 params:
   Desktop:
     min_width: 1400
