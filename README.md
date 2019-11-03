@@ -9,7 +9,6 @@ For more information read the config section.
 
 Sort Images ensures that no duplicate images are added to the destination through the use of MD5 sums on each image.
 
-I wrote this in a morning so let me know if you find any mistakes.
 ### Setup
 1. Update config.yml (src = source directory, dest = dest directory)
 2. Configure systemd unit file and run ./systemd/install.sh
